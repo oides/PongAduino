@@ -8,7 +8,6 @@
 #define CS 10
 #define NUMERO_MATRIZES 1
 
-
 XBeeJoystick xBeeJoystick;
 LedControl ledMatrix = LedControl(DATA_IN, CLK, CS, NUMERO_MATRIZES); 
 Pong pong;
@@ -16,8 +15,9 @@ Pong pong;
 void setup()
 {   
   Serial.begin(9600);  
-  setupMatrix();  
-  pong.setMatrix(&ledMatrix);
+  setupMatrix();
+  
+  pong.setupApp("Pong", &ledMatrix);
 }
 
 void loop()
@@ -27,26 +27,37 @@ void loop()
   if (joystickButtonPressed)
   {
     if (joystickButtonPressed == BUTTON_A)
-    {        
+    {
+      stopApps();
       loadUltrassomApp();      
     }      
     if (joystickButtonPressed == BUTTON_B)
     {
+      stopApps();
       loadTemperaturaApp();      
     }
     if (joystickButtonPressed == BUTTON_C)
     {
+      stopApps();
       loadLuzApp();      
     }
     if (joystickButtonPressed == BUTTON_D)
     {
+      stopApps();
       loadInfravermelhoApp();      
     }    
-    if (joystickButtonPressed == BUTTON_LEFT || joystickButtonPressed == BUTTON_RIGHT)
+    if (joystickButtonPressed == BUTTON_UP)
     {
-      loadPongApp(joystickButtonPressed);
+      stopApps();
+      pong.startApp();
+    }    
+    if (joystickButtonPressed == BUTTON_DOWN)
+    {
+      stopApps();
     }    
   }
+  
+  executeAppsLoop();
 
 }
 
@@ -70,9 +81,14 @@ void loadInfravermelhoApp()
   ledMatrix.printStringScroll(0, 0, "Iniciando infravermelho", 50, '<');
 }
 
-void loadPongApp(int buttonPressed)
+void executeAppsLoop()
 {
-  pong.start();
+  pong.loopApp();
+}
+
+void stopApps()
+{
+  pong.stopApp();
 }
 
 void setupMatrix()

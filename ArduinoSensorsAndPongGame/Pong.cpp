@@ -4,18 +4,7 @@
 */
 #include "Pong.h"
 
-Pong::Pong()
+void Pong::loopApp()
 {
-  _running = false;
-}
-
-void Pong::start()
-{  
-  _ledMatrix->printStringScroll(0, 0, "Iniciando Pong", 50, '<');
-  _running = true;
-}
-
-void Pong::setMatrix(LedControl *ledMatrix)
-{
-  _ledMatrix = ledMatrix;
+  if (_running) _ledMatrix->printStringScroll(0, 0, "PONG", 30, '<');
 }
