@@ -1,6 +1,7 @@
 #include <XBeeJoystick.h>
 #include <XBee.h>
 #include <LedControl.h>
+#include "Pong.h"
 
 #define DATA_IN 12
 #define CLK 11
@@ -9,19 +10,14 @@
 
 
 XBeeJoystick xBeeJoystick;
-
 LedControl ledMatrix = LedControl(DATA_IN, CLK, CS, NUMERO_MATRIZES); 
+Pong pong;
 
 void setup()
 {   
-  Serial.begin(9600);
-  
-  ledMatrix.shutdown(0, false);
-  ledMatrix.setIntensity(0, 0);
-  ledMatrix.clearDisplay(0);
-  
-  ledMatrix.printStringScroll(0, 0, "Trabalho Final INF611", 50, '<');
-  
+  Serial.begin(9600);  
+  setupMatrix();  
+  pong.setMatrix(&ledMatrix);
 }
 
 void loop()
@@ -46,7 +42,12 @@ void loop()
     {
       loadInfravermelhoApp();      
     }    
-  }    
+    if (joystickButtonPressed == BUTTON_LEFT || joystickButtonPressed == BUTTON_RIGHT)
+    {
+      loadPongApp(joystickButtonPressed);
+    }    
+  }
+
 }
 
 void loadUltrassomApp()
@@ -69,3 +70,16 @@ void loadInfravermelhoApp()
   ledMatrix.printStringScroll(0, 0, "Iniciando infravermelho", 50, '<');
 }
 
+void loadPongApp(int buttonPressed)
+{
+  pong.start();
+}
+
+void setupMatrix()
+{
+  ledMatrix.shutdown(0, false);
+  ledMatrix.setIntensity(0, 0);
+  ledMatrix.clearDisplay(0);
+  
+  ledMatrix.printStringScroll(0, 0, "Trabalho Final INF611", 50, '<');
+}
