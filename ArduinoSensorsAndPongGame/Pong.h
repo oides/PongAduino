@@ -11,6 +11,8 @@
 class Pong: public BaseApp
 {
   public:
+    void startApp();
+    void stopApp();  
     void loopApp();
 };
 
