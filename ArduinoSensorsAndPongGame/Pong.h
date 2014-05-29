@@ -7,6 +7,7 @@
 
 #include <LedControl.h>
 #include "BaseApp.h"
+#include "GameModel.h"
 
 class Pong: public BaseApp
 {
@@ -14,6 +15,13 @@ class Pong: public BaseApp
     void startApp();
     void stopApp();  
     void loopApp();
+    void move(int side);
+
+  private:
+    void initializeGame();
+    void loadScene();
+    void drawPlayer();
+    GameModel gameModel;
 };
 
 #endif

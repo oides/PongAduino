@@ -68,6 +68,10 @@ void loop()
     {
       stopApps();
     }    
+    if (joystickButtonPressed == BUTTON_LEFT || joystickButtonPressed == BUTTON_RIGHT)
+    {
+      pong.move(joystickButtonPressed);
+    }    
   }
   
   executeAppsLoop();

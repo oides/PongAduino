@@ -10,8 +10,8 @@
 class BaseApp
 {
   public:
-    void startApp();
-    void stopApp();
+    virtual void startApp();
+    virtual void stopApp();
     void setupApp(String appName, LedControl *ledMatrix);
     virtual void loopApp() = 0;
     
