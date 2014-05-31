@@ -6,5 +6,5 @@
 
 void Temperatura::loopApp()
 {
-  if (_running) _ledMatrix->printStringScroll(0, 0, "TEMP", 30, '<');
+  if (BaseApp::_running) BaseApp::_ledMatrix->printStringScroll(0, 0, "TEMP", 30, '<');
 }

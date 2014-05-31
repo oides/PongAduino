@@ -1,3 +1,4 @@
+#include <TimerOne.h>
 #include <XBeeJoystick.h>
 #include <XBee.h>
 #include <LedControl.h>
@@ -102,5 +103,5 @@ void setupMatrix()
   ledMatrix.setIntensity(0, 0);
   ledMatrix.clearDisplay(0);
   
-  ledMatrix.printStringScroll(0, 0, "Trabalho Final INF611", 50, '<');
+  ledMatrix.printStringScroll(0, 0, "Trabalho Final INF611", MESSAGE_SPEED, '<');
 }

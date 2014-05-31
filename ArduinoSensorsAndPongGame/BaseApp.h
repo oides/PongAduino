@@ -7,12 +7,14 @@
 
 #include <LedControl.h>
 
+#define MESSAGE_SPEED 30 // 60
+
 class BaseApp
 {
   public:
     virtual void startApp();
     virtual void stopApp();
-    void setupApp(String appName, LedControl *ledMatrix);
+    virtual void setupApp(String appName, LedControl *ledMatrix);
     virtual void loopApp() = 0;
     
   protected:
