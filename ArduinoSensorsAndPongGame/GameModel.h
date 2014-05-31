@@ -18,6 +18,9 @@ class GameModel
     int playerPosition;
     int ballPosition[2];
     int ballAngle;
+    long gameSpeed;
+    boolean gameOver;
+    long turnsCount;
 };
 
 #endif

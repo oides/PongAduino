@@ -17,6 +17,7 @@ class Pong: public BaseApp
     void startApp();
     void stopApp();
     void loopApp();
+    void setupApp(String appName, LedControl *ledMatrix);
     void move(int side);
     void updateBallPosition();
     
@@ -29,6 +30,8 @@ class Pong: public BaseApp
     void loadScene();
     void drawPlayer();
     void drawBall();
+    void gameLoop();
+    void gameOver();
     boolean ballMatchPlayer();
     boolean ballBottomUp();
     boolean ballTopDown();
@@ -37,7 +40,7 @@ class Pong: public BaseApp
     void defineOpositeX();
     void defineOpositeYTop();
     void defineOpositeYPlayer();
-
+    void beep();
     
     // Properties
     GameModel gameModel;

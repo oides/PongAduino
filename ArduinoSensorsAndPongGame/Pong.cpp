@@ -9,10 +9,17 @@
 #include <TimerOne.h>
 
 #define DEFAULT_GAME_SPEED 300000
+#define DECREMENT_GAME_SPEED 0.95
 #define TOPO_TELA 6
 #define TELA_DIREITA 6
 #define TELA_ESQUERDA 1
 #define BASE_TELA 1
+
+#define COORD_X 0
+#define COORD_Y 1
+
+#define BEEP 7
+#define BEEP_TIME 100
 
 Pong *Pong::instance;
 
@@ -25,10 +32,55 @@ void Pong::loopApp()
 {
   if (_running)
   {
-    loadScene();
-    drawPlayer();
-    drawBall();
+    if (!gameModel.gameOver)
+    {
+      gameLoop();
+    }
+    else
+    {
+      gameOver();
+    }
   }
+}
+
+void Pong::gameLoop()
+{
+  loadScene();
+  drawPlayer();
+  drawBall();      
+}
+
+void Pong::gameOver()
+{
+  
+  _ledMatrix->clearDisplay(0);
+  for (int i = 0; i < 3; i++)
+  {
+    beep();
+    delay(10);
+  }
+  
+  String message = "  Game Over  Pontos: ";
+  message += gameModel.turnsCount;  
+
+  char startMessage[message.length() + 1];
+  message.toCharArray(startMessage, message.length() + 1);
+
+  _ledMatrix->printStringScroll(0, 0, startMessage , MESSAGE_SPEED, '<');
+}
+
+void Pong::setupApp(String appName, LedControl *ledMatrix)
+{
+  BaseApp::setupApp(appName, ledMatrix);
+  // Ativando pino do beep  
+  pinMode(BEEP, OUTPUT);     
+}
+
+void Pong::beep()
+{
+  digitalWrite(BEEP, HIGH);
+  delay(BEEP_TIME);
+  digitalWrite(BEEP, LOW);
 }
 
 void Pong::startApp()
@@ -49,11 +101,15 @@ void Pong::initializeGame()
 {
   gameModel.playerPosition = 3;
   
-  gameModel.ballPosition[0] = 3;
-  gameModel.ballPosition[1] = 4;
+  gameModel.ballPosition[COORD_X] = 3;
+  gameModel.ballPosition[COORD_Y] = 4;
   gameModel.ballAngle = BALL_UP;
   
-  Timer1.initialize(DEFAULT_GAME_SPEED);
+  gameModel.gameSpeed = DEFAULT_GAME_SPEED;
+  gameModel.gameOver = false;
+  gameModel.turnsCount = 0;
+  
+  Timer1.initialize(gameModel.gameSpeed);
 }
 
 void Pong::loadScene()
@@ -76,7 +132,7 @@ void Pong::drawPlayer()
 
 void Pong::drawBall()
 {
-  _ledMatrix->setLed(0, gameModel.ballPosition[0], gameModel.ballPosition[1], true);
+  _ledMatrix->setLed(0, gameModel.ballPosition[COORD_X], gameModel.ballPosition[COORD_Y], true);
 }
 
 void Pong::move(int side)
@@ -92,59 +148,77 @@ void Pong::move(int side)
 void Pong::updateBallPosition()
 {
   // Eixo Y subindo
-  if (ballBottomUp() && gameModel.ballPosition[1] < TOPO_TELA)
+  if (ballBottomUp() && gameModel.ballPosition[COORD_Y] < TOPO_TELA)
   {
-    gameModel.ballPosition[1] += 1;
+    gameModel.ballPosition[COORD_Y] += 1;
   }
-  else if (ballBottomUp() && gameModel.ballPosition[1] == TOPO_TELA)
+  else if (ballBottomUp() && gameModel.ballPosition[COORD_Y] == TOPO_TELA)
   {
     defineOpositeYTop();
-    gameModel.ballPosition[1] -= 1;
+    gameModel.ballPosition[COORD_Y] -= 1;
   }
   // Eixo Y descendo
-  else if (ballTopDown() && gameModel.ballPosition[1] > BASE_TELA)
+  else if (ballTopDown() && gameModel.ballPosition[COORD_Y] > BASE_TELA)
   {
-    gameModel.ballPosition[1] -= 1;
+    gameModel.ballPosition[COORD_Y] -= 1;
   }
-  else if (ballTopDown() && gameModel.ballPosition[1] == BASE_TELA && ballMatchPlayer())
+  else if (ballTopDown() && gameModel.ballPosition[COORD_Y] == BASE_TELA && ballMatchPlayer())
   {
     defineOpositeYPlayer();
-    gameModel.ballPosition[1] += 1;
+    gameModel.ballPosition[COORD_Y] += 1;
   }   
   else if (ballTopDown())
   {
-    gameModel.ballPosition[1] -= 1;
-  }   
+    gameModel.ballPosition[COORD_Y] -= 1;
+  }
   
   // Eixo X direita
-  if (ballLeftRight() && gameModel.ballPosition[0] < TELA_DIREITA)
+  if (ballLeftRight() && gameModel.ballPosition[COORD_X] < TELA_DIREITA)
   {
-    gameModel.ballPosition[0] += 1;
+    gameModel.ballPosition[COORD_X] += 1;
   }
-  else if (ballLeftRight() && gameModel.ballPosition[0] == TELA_DIREITA)
+  else if (ballLeftRight() && gameModel.ballPosition[COORD_X] == TELA_DIREITA)
   {
     defineOpositeX();
-    gameModel.ballPosition[0] -= 1;
+    gameModel.ballPosition[COORD_X] -= 1;
   }
   // Eixo X esquerda
-  else if (ballRightLeft() && gameModel.ballPosition[0] > TELA_ESQUERDA)
+  else if (ballRightLeft() && gameModel.ballPosition[COORD_X] > TELA_ESQUERDA)
   {
-    gameModel.ballPosition[0] -= 1;
+    gameModel.ballPosition[COORD_X] -= 1;
   }
-  else if (ballRightLeft() && gameModel.ballPosition[0] == TELA_ESQUERDA)
+  else if (ballRightLeft() && gameModel.ballPosition[COORD_X] == TELA_ESQUERDA)
   {
     defineOpositeX();
-    gameModel.ballPosition[0] += 1;
-  }  
+    gameModel.ballPosition[COORD_X] += 1;
+  }
+
+  // Verificando se o jogo ja terminou
+  if (gameModel.ballPosition[COORD_Y] < 0)
+  {
+    gameModel.gameOver = true;
+  }
   
 }
 
 boolean Pong::ballMatchPlayer()
 {
-  return ((gameModel.ballPosition[0] == gameModel.playerPosition) ||
-          (gameModel.ballPosition[0] == gameModel.playerPosition + 1) ||
-          (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[0] == gameModel.playerPosition + 2) ||
-          (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[0] == gameModel.playerPosition -1));
+  boolean retorno = ((gameModel.ballPosition[COORD_X] == gameModel.playerPosition) ||
+          (gameModel.ballPosition[COORD_X] == gameModel.playerPosition + 1) ||
+          (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition + 2) ||
+          (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition -1));
+          
+  if (retorno)
+  {
+    gameModel.gameSpeed *= DECREMENT_GAME_SPEED;    
+    Timer1.initialize(gameModel.gameSpeed);
+    
+    gameModel.turnsCount++;
+    
+    beep();
+  }
+  
+  return retorno;    
 }
 
 void Pong::defineOpositeX()
@@ -185,35 +259,35 @@ void Pong::defineOpositeYTop()
 
 void Pong::defineOpositeYPlayer()
 {
-  if (gameModel.ballAngle == BALL_DOWN && gameModel.ballPosition[0] == gameModel.playerPosition)
+  if (gameModel.ballAngle == BALL_DOWN && gameModel.ballPosition[COORD_X] == gameModel.playerPosition)
   {
     gameModel.ballAngle = BALL_UP_LEFT;
   }
-  else if (gameModel.ballAngle == BALL_DOWN && gameModel.ballPosition[0] == gameModel.playerPosition + 1)
+  else if (gameModel.ballAngle == BALL_DOWN && gameModel.ballPosition[COORD_X] == gameModel.playerPosition + 1)
   {
     gameModel.ballAngle = BALL_UP_RIGHT;
   }
-  else if (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[0] == gameModel.playerPosition)
+  else if (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition)
   {
     gameModel.ballAngle = BALL_UP_LEFT;
   }
-  else if (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[0] == gameModel.playerPosition + 1)
+  else if (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition + 1)
   {
     gameModel.ballAngle = BALL_UP;
   }
-  else if (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[0] == gameModel.playerPosition + 2)
+  else if (gameModel.ballAngle == BALL_DOWN_LEFT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition + 2)
   {
     gameModel.ballAngle = BALL_UP_RIGHT;
   }
-  else if (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[0] == gameModel.playerPosition - 1)
+  else if (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition - 1)
   {
     gameModel.ballAngle = BALL_UP_LEFT;
   }
-  else if (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[0] == gameModel.playerPosition)
+  else if (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition)
   {
     gameModel.ballAngle = BALL_UP;
   }
-  else if (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[0] == gameModel.playerPosition + 1)
+  else if (gameModel.ballAngle == BALL_DOWN_RIGHT && gameModel.ballPosition[COORD_X] == gameModel.playerPosition + 1)
   {
     gameModel.ballAngle = BALL_UP_RIGHT;
   }
