@@ -13,7 +13,7 @@
 #define BALL_DOWN_LEFT 5
 
 class GameModel
-{
+{    
   public:
     int playerPosition;
     int ballPosition[2];

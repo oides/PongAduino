@@ -56,7 +56,7 @@ void Pong::gameOver()
   _ledMatrix->clearDisplay(0);
   for (int i = 0; i < 3; i++)
   {
-    beep();
+    //beep();
     delay(10);
   }
   
@@ -73,14 +73,14 @@ void Pong::setupApp(String appName, LedControl *ledMatrix)
 {
   BaseApp::setupApp(appName, ledMatrix);
   // Ativando pino do beep  
-  pinMode(BEEP, OUTPUT);     
+  //pinMode(BEEP, OUTPUT);     
 }
 
 void Pong::beep()
 {
-  digitalWrite(BEEP, HIGH);
+  /*digitalWrite(BEEP, HIGH);
   delay(BEEP_TIME);
-  digitalWrite(BEEP, LOW);
+  digitalWrite(BEEP, LOW);*/
 }
 
 void Pong::startApp()
@@ -215,7 +215,7 @@ boolean Pong::ballMatchPlayer()
     
     gameModel.turnsCount++;
     
-    beep();
+    //beep();
   }
   
   return retorno;    

@@ -1,7 +1,8 @@
-#include <TimerOne.h>
 #include <XBeeJoystick.h>
 #include <XBee.h>
 #include <LedControl.h>
+#include <IRremote.h>
+#include <TimerOne.h>
 #include "Pong.h"
 #include "Infravermelho.h"
 #include "Luz.h"
