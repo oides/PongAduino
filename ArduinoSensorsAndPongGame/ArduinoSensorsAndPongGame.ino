@@ -3,11 +3,13 @@
 #include <LedControl.h>
 #include <IRremote.h>
 #include <TimerOne.h>
+#include <dht11.h>
 #include "Pong.h"
 #include "Infravermelho.h"
 #include "Luz.h"
 #include "Temperatura.h"
 #include "Ultrassom.h"
+
 
 #define DATA_IN 12
 #define CLK 11

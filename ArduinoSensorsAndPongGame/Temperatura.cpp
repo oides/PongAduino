@@ -3,8 +3,45 @@
   Coded by Oidas Andrade.
 */
 #include "Temperatura.h"
+#include <string.h>
+#include <dht11.h>
+
+#define DHT11PIN 2
+
+dht11 DHT11;
+char floatValue[2];
+char message[20];
 
 void Temperatura::loopApp()
 {
-  if (BaseApp::_running) BaseApp::_ledMatrix->printStringScroll(0, 0, "TEMP", 30, '<');
+  if (BaseApp::_running)
+  {
+    int chk = DHT11.read(DHT11PIN);
+
+    switch (chk)
+    {
+      case 0: Serial.println("OK"); break;
+      case -1: Serial.println("Erro de Checksum"); break;
+      case -2: Serial.println("Erro de Time Out"); break;
+      default: Serial.println("Erro Desconhecido"); break;
+    }
+
+    dtostrf((float)DHT11.humidity, 2, 0, floatValue); 
+    String umidadeValueStr(floatValue);
+    
+    String umidade = "Umidade (%): ";
+    umidade += umidadeValueStr;    
+    umidade.toCharArray(message, umidade.length() + 1);    
+    _ledMatrix->printStringScroll(0, 0, message, 30, '<');
+
+    dtostrf((float)DHT11.temperature, 2, 0, floatValue); 
+    String temperaturaValueStr(floatValue);
+    
+    String temperatura = " Temperatura (Celsius): ";
+    temperatura += temperaturaValueStr;    
+    temperatura.toCharArray(message, temperatura.length() + 1);    
+    _ledMatrix->printStringScroll(0, 0, message, 30, '<');
+
+    delay(2000);    
+  }
 }
