@@ -56,7 +56,7 @@ void Pong::gameOver()
   _ledMatrix->clearDisplay(0);
   for (int i = 0; i < 3; i++)
   {
-    //beep();
+    beep();
     delay(10);
   }
   
@@ -73,22 +73,20 @@ void Pong::setupApp(String appName, LedControl *ledMatrix)
 {
   BaseApp::setupApp(appName, ledMatrix);
   // Ativando pino do beep  
-  //pinMode(BEEP, OUTPUT);     
+  pinMode(BEEP, OUTPUT);     
 }
 
 void Pong::beep()
 {
-  /*digitalWrite(BEEP, HIGH);
+  digitalWrite(BEEP, HIGH);
   delay(BEEP_TIME);
-  digitalWrite(BEEP, LOW);*/
+  digitalWrite(BEEP, LOW);
 }
 
 void Pong::startApp()
 {    
   initializeGame();
   BaseApp::startApp();
-  
-  Timer1.attachInterrupt(functionUpdateBallPosition);
 }
 
 void Pong::stopApp()
@@ -109,6 +107,7 @@ void Pong::initializeGame()
   gameModel.gameOver = false;
   gameModel.turnsCount = 0;
   
+  Timer1.attachInterrupt(functionUpdateBallPosition);
   Timer1.initialize(gameModel.gameSpeed);
 }
 
@@ -147,48 +146,60 @@ void Pong::move(int side)
 
 void Pong::updateBallPosition()
 {
+  Serial.println("atualizanod bola ");
+  Serial.println(gameModel.ballPosition[COORD_X]);
+  Serial.println(gameModel.ballPosition[COORD_Y]);
   // Eixo Y subindo
   if (ballBottomUp() && gameModel.ballPosition[COORD_Y] < TOPO_TELA)
   {
+      Serial.println("Bola 1");
     gameModel.ballPosition[COORD_Y] += 1;
   }
   else if (ballBottomUp() && gameModel.ballPosition[COORD_Y] == TOPO_TELA)
   {
+      Serial.println("Bola 2");
     defineOpositeYTop();
     gameModel.ballPosition[COORD_Y] -= 1;
   }
   // Eixo Y descendo
   else if (ballTopDown() && gameModel.ballPosition[COORD_Y] > BASE_TELA)
   {
+      Serial.println("Bola 3");
     gameModel.ballPosition[COORD_Y] -= 1;
   }
   else if (ballTopDown() && gameModel.ballPosition[COORD_Y] == BASE_TELA && ballMatchPlayer())
   {
+      Serial.println("Bola 4");
     defineOpositeYPlayer();
     gameModel.ballPosition[COORD_Y] += 1;
   }   
   else if (ballTopDown())
   {
+      Serial.println("Bola 5");
     gameModel.ballPosition[COORD_Y] -= 1;
   }
   
   // Eixo X direita
   if (ballLeftRight() && gameModel.ballPosition[COORD_X] < TELA_DIREITA)
   {
+      Serial.println("Bola 6");
     gameModel.ballPosition[COORD_X] += 1;
   }
   else if (ballLeftRight() && gameModel.ballPosition[COORD_X] == TELA_DIREITA)
   {
+    Serial.println("Bola 7");
     defineOpositeX();
     gameModel.ballPosition[COORD_X] -= 1;
   }
   // Eixo X esquerda
   else if (ballRightLeft() && gameModel.ballPosition[COORD_X] > TELA_ESQUERDA)
   {
+      Serial.println("Bola 8");
     gameModel.ballPosition[COORD_X] -= 1;
   }
   else if (ballRightLeft() && gameModel.ballPosition[COORD_X] == TELA_ESQUERDA)
   {
+      Serial.println("Bola 9");
     defineOpositeX();
     gameModel.ballPosition[COORD_X] += 1;
   }
@@ -196,6 +207,7 @@ void Pong::updateBallPosition()
   // Verificando se o jogo ja terminou
   if (gameModel.ballPosition[COORD_Y] < 0)
   {
+      Serial.println("Bola 10");
     gameModel.gameOver = true;
   }
   
@@ -215,7 +227,7 @@ boolean Pong::ballMatchPlayer()
     
     gameModel.turnsCount++;
     
-    //beep();
+    beep();
   }
   
   return retorno;    

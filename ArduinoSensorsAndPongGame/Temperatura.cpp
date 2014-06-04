@@ -26,22 +26,16 @@ void Temperatura::loopApp()
       default: Serial.println("Erro Desconhecido"); break;
     }
 
-    dtostrf((float)DHT11.humidity, 2, 0, floatValue); 
-    String umidadeValueStr(floatValue);
+    dtostrf((float)DHT11.humidity, 2, 0, floatValue);
+    _ledMatrix->printStringScroll(0, 0, "Umidade (%): ", 30, '<');
+    _ledMatrix->printStringScroll(0, 0, floatValue, 30, '<');
     
-    String umidade = "Umidade (%): ";
-    umidade += umidadeValueStr;    
-    umidade.toCharArray(message, umidade.length() + 1);    
-    _ledMatrix->printStringScroll(0, 0, message, 30, '<');
+    delay(500);
 
-    dtostrf((float)DHT11.temperature, 2, 0, floatValue); 
-    String temperaturaValueStr(floatValue);
-    
-    String temperatura = " Temperatura (Celsius): ";
-    temperatura += temperaturaValueStr;    
-    temperatura.toCharArray(message, temperatura.length() + 1);    
-    _ledMatrix->printStringScroll(0, 0, message, 30, '<');
+    dtostrf((float)DHT11.temperature, 2, 0, floatValue);
+    _ledMatrix->printStringScroll(0, 0, "Temperatura (Celsius): ", 30, '<');
+    _ledMatrix->printStringScroll(0, 0, floatValue, 30, '<');
 
-    delay(2000);    
-  }
+    delay(2000);
+  } 
 }
