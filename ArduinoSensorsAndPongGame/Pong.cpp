@@ -32,13 +32,13 @@ void Pong::loopApp()
 {
   if (_running)
   {
-    if (!gameModel.gameOver)
+    if (gameModel.gameOver)
     {
-      gameLoop();
+      gameOver();
     }
     else
     {
-      gameOver();
+      gameLoop();
     }
   }
 }
@@ -72,7 +72,6 @@ void Pong::gameOver()
 void Pong::setupApp(String appName, LedControl *ledMatrix)
 {
   BaseApp::setupApp(appName, ledMatrix);
-  // Ativando pino do beep  
   pinMode(BEEP, OUTPUT);     
 }
 
@@ -146,60 +145,48 @@ void Pong::move(int side)
 
 void Pong::updateBallPosition()
 {
-  Serial.println("atualizanod bola ");
-  Serial.println(gameModel.ballPosition[COORD_X]);
-  Serial.println(gameModel.ballPosition[COORD_Y]);
   // Eixo Y subindo
   if (ballBottomUp() && gameModel.ballPosition[COORD_Y] < TOPO_TELA)
   {
-      Serial.println("Bola 1");
     gameModel.ballPosition[COORD_Y] += 1;
   }
   else if (ballBottomUp() && gameModel.ballPosition[COORD_Y] == TOPO_TELA)
   {
-      Serial.println("Bola 2");
     defineOpositeYTop();
     gameModel.ballPosition[COORD_Y] -= 1;
   }
   // Eixo Y descendo
   else if (ballTopDown() && gameModel.ballPosition[COORD_Y] > BASE_TELA)
   {
-      Serial.println("Bola 3");
     gameModel.ballPosition[COORD_Y] -= 1;
   }
   else if (ballTopDown() && gameModel.ballPosition[COORD_Y] == BASE_TELA && ballMatchPlayer())
   {
-      Serial.println("Bola 4");
     defineOpositeYPlayer();
     gameModel.ballPosition[COORD_Y] += 1;
   }   
   else if (ballTopDown())
   {
-      Serial.println("Bola 5");
     gameModel.ballPosition[COORD_Y] -= 1;
   }
   
   // Eixo X direita
   if (ballLeftRight() && gameModel.ballPosition[COORD_X] < TELA_DIREITA)
   {
-      Serial.println("Bola 6");
     gameModel.ballPosition[COORD_X] += 1;
   }
   else if (ballLeftRight() && gameModel.ballPosition[COORD_X] == TELA_DIREITA)
   {
-    Serial.println("Bola 7");
     defineOpositeX();
     gameModel.ballPosition[COORD_X] -= 1;
   }
   // Eixo X esquerda
   else if (ballRightLeft() && gameModel.ballPosition[COORD_X] > TELA_ESQUERDA)
   {
-      Serial.println("Bola 8");
     gameModel.ballPosition[COORD_X] -= 1;
   }
   else if (ballRightLeft() && gameModel.ballPosition[COORD_X] == TELA_ESQUERDA)
   {
-      Serial.println("Bola 9");
     defineOpositeX();
     gameModel.ballPosition[COORD_X] += 1;
   }
@@ -207,7 +194,6 @@ void Pong::updateBallPosition()
   // Verificando se o jogo ja terminou
   if (gameModel.ballPosition[COORD_Y] < 0)
   {
-      Serial.println("Bola 10");
     gameModel.gameOver = true;
   }
   
@@ -226,6 +212,11 @@ boolean Pong::ballMatchPlayer()
     Timer1.initialize(gameModel.gameSpeed);
     
     gameModel.turnsCount++;
+    
+    if (gameModel.turnsCount > 50)
+    {
+      initializeGame();
+    }
     
     beep();
   }

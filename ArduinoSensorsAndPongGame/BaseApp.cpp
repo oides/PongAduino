@@ -2,10 +2,8 @@
   XBeeJoystick.h - Library for XBeeJoystick arduino code.
   Coded by Oidas Andrade.
 */
-#include "BaseApp.h"
 #include <XBeeJoystick.h>
-
-#define MESSAGE_SPEED 30 // 60
+#include "BaseApp.h"
 
 void BaseApp::setupApp(String appName, LedControl *ledMatrix)
 {

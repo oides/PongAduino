@@ -32,6 +32,7 @@ class Pong: public BaseApp
     void drawBall();
     void gameLoop();
     void gameOver();
+    void gameWin();
     boolean ballMatchPlayer();
     boolean ballBottomUp();
     boolean ballTopDown();

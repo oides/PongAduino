@@ -12,7 +12,6 @@ void Infravermelho::loopApp()
 {  
   if (_running && ir_recebe.decode(&codigo_recebido))
   {    
-    Serial.println(codigo_recebido.value);
     switch(codigo_recebido.value)
     {
       case bt1:

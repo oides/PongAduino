@@ -13,7 +13,13 @@ void Luz::loopApp()
   {
     _ledMatrix->printStringScroll(0, 0, "Ilulinacao: ", MESSAGE_SPEED, '<');
     
-    dtostrf(analogRead(sensor), 2, 0, valorSensor);
+    int valor = analogRead(sensor);
+    if (valor > 1000)
+    {
+      valor = 1000;
+    }
+    
+    dtostrf(valor, 2, 0, valorSensor);
     _ledMatrix->printStringScroll(0, 0, valorSensor, MESSAGE_SPEED, '<');
     
     delay(1000);

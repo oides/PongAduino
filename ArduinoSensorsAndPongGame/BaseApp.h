@@ -7,7 +7,7 @@
 
 #include <LedControl.h>
 
-#define MESSAGE_SPEED 60 // 60
+#define MESSAGE_SPEED 45
 
 class BaseApp
 {

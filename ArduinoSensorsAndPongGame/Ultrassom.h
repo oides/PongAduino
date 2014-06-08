@@ -12,6 +12,8 @@ class Ultrassom: public BaseApp
 {
   public:
     void loopApp();
+    void setupApp(String appName, LedControl *ledMatrix);
 };
 
+void calcularDidstancia(long time);
 #endif

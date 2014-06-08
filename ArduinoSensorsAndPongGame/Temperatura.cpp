@@ -27,14 +27,14 @@ void Temperatura::loopApp()
     }
 
     dtostrf((float)DHT11.humidity, 2, 0, floatValue);
-    _ledMatrix->printStringScroll(0, 0, "Umidade (%): ", 30, '<');
-    _ledMatrix->printStringScroll(0, 0, floatValue, 30, '<');
+    _ledMatrix->printStringScroll(0, 0, "Umidade (%): ", MESSAGE_SPEED, '<');
+    _ledMatrix->printStringScroll(0, 0, floatValue, MESSAGE_SPEED, '<');
     
     delay(500);
 
     dtostrf((float)DHT11.temperature, 2, 0, floatValue);
-    _ledMatrix->printStringScroll(0, 0, "Temperatura (Celsius): ", 30, '<');
-    _ledMatrix->printStringScroll(0, 0, floatValue, 30, '<');
+    _ledMatrix->printStringScroll(0, 0, "Temperatura (Celsius): ", MESSAGE_SPEED, '<');
+    _ledMatrix->printStringScroll(0, 0, floatValue, MESSAGE_SPEED, '<');
 
     delay(2000);
   } 
